@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  mission_planner:
+    build: mission_planner/.
+    image: mission_planner:latest
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    networks:
+      - simulation
+  sitl:
+    build: sitl/.
+    image: sitl:latest
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./sitl/ardupilot:/ardupilot
+    networks:
+      - simulation
+
+networks:
+    simulation:
+        driver: bridge
+
