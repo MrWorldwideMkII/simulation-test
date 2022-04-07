@@ -1,7 +1,6 @@
 FROM ubuntu:20.04
 
-VOLUME /ardupilot
-WORKDIR /ardupilot
+WORKDIR /
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN useradd -U -m ardupilot && \
@@ -9,12 +8,18 @@ RUN useradd -U -m ardupilot && \
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     bash-completion \
+    git \
     lsb-release \
+    rsync \
     software-properties-common \
     sudo
 
-COPY ardupilot/Tools/environment_install/install-prereqs-ubuntu.sh /ardupilot/Tools/environment_install/
-COPY ardupilot/Tools/completion /ardupilot/Tools/completion/
+RUN git clone -b Copter-4.1.5 https://github.com/ArduPilot/ardupilot \
+    && cd ardupilot \
+    && git submodule update --init --recursive
+
+VOLUME /ardupilot
+WORKDIR /ardupilot
 
 # Create non root user for pip
 ENV USER=ardupilot
@@ -37,8 +42,6 @@ RUN echo "if [ -d \"\$HOME/.local/bin\" ] ; then\nPATH=\"\$HOME/.local/bin:\$PAT
 
 # Set the buildlogs directory into /tmp as other directory aren't accessible
 ENV BUILDLOGS=/tmp/buildlogs
-
-RUN sudo apt install -y git rsync
 
 # Cleanup
 RUN sudo apt-get clean \

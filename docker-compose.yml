@@ -17,7 +17,6 @@ services:
       - DISPLAY=${DISPLAY}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./sitl/ardupilot:/ardupilot
     networks:
       - simulation
 
